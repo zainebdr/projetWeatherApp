@@ -19,7 +19,7 @@
 </head>
 <body>
    
-    <div class="weather-app">
+    <div class="weather-app {{city['weather']}}">
         <div class="container">
             <h3 class="brand">the weather</h3>
             <div>
@@ -56,7 +56,7 @@
             </form>
             <ul class="cities">
                 {%for city in cities%}
-                <li onclick="getCityInterface(this.id)" id={{city.city}} class="city">{{city.city}}</li>
+                <li id={{city.city}} class="city"><a href="http://localhost:5000/{{city.city}}" style="color: inherit;text-decoration: none;">{{city.city}}</a></li>
                 {%endfor%}
                 <!-- <li id="my-button" class="city">cold country</li>
                 <li id="my-button" class="city">sunny country</li>
@@ -66,8 +66,7 @@
             <script>
                 function getCityInterface(id) {
                     var xhr = new XMLHttpRequest();
-                    xhr.open('POST', '/city-click');
-                    xhr.setRequestHeader('Content-Type', 'application/json');
+                    xhr.open('GET', '/'+id);
                     xhr.onload = function() {
                         if (xhr.status === 200) {
                             alert('Button clicked!');
@@ -75,7 +74,7 @@
                             alert('Error!');
                         }
                     };
-                    xhr.send(JSON.stringify({"id":id}));
+                    xhr.send();
                 };
             </script>
             <ul class="details">
