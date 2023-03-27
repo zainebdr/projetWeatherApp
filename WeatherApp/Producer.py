@@ -1,5 +1,5 @@
 import json
-from kafka import KafkaProducer
+from confluent_kafka import Producer
 import requests
 import geocoder
 
@@ -19,7 +19,8 @@ def get_weatherdata(choix,ville):
         url = f"https://api.openweathermap.org/data/2.5/weather?lat={latitude}&lon={longitude}&appid={api_key}"
  
     else:
-        
+        g = geocoder.osm(ville)
+        latitude, longitude = g.latlng
         # URL de l'API avec les paramètres de la ville et de la clé API
         url = f"https://api.openweathermap.org/data/2.5/weather?q={ville}&appid={api_key}"
             
@@ -48,25 +49,26 @@ def get_weatherdata(choix,ville):
         # Convertir le dictionnaire en JSON
         weather_data_json = json.dumps(weather_data)
         print("Je vais essayer d'envoyer")
+        print(weather_data)
+       
 
         # Créer un producteur Kafka
-        producer = KafkaProducer(
-            bootstrap_servers=['localhost:9092'],
-            api_version=(0,11,5),
-            value_serializer=lambda x: json.dumps(x).encode('utf-8')
-        )
-
-        # Envoyer les données météorologiques au sujet "weather"
-        producer.send('weather', value=weather_data_json)
-
+        producer = Producer({'bootstrap.servers': 'broker:29092'})
+        print("Je me suis connecté")
+        producer.poll(1)
+        # Envoyer les données météorologiques au sujet "weather" 
+        producer.produce('weather', weather_data_json)
+        
         # Fermer le producteur Kafka
-        producer.close()
+        producer.flush()
+        
     else:
         # Afficher le code d'erreur HTTP si la requête a échoué
         print(f"Erreur de requête : {response.status_code}")
 
     print("Jai envoyé")
-get_weatherdata(1,"")
+
+get_weatherdata(0,"Paris,France")
 
 
 

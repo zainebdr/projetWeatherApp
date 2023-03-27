@@ -10,6 +10,7 @@ cycler==0.11.0
 daterangestr==0.0.3
 decorator==5.1.1
 experta==1.9.4
+Faker==18.3.1
 fonttools==4.39.2
 frozendict==1.2
 future==0.18.3
